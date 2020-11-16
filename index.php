@@ -134,6 +134,40 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             margin: 0 auto 1em auto;
         }
 
+        div.patterns {
+            background-color: white;
+            color: black;
+            width: 720px;
+            margin: 0 auto 1em auto;
+            padding: 1em;
+        }
+
+        .pattern-cards {
+            display: grid;
+            grid-template-columns: 220px 220px 220px;
+            grid-gap: 10px;
+            color: #444;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .pattern-card {
+            background-color: rgb(70, 70, 70);
+            color: #fff;
+            border-radius: 5px;
+            padding: 5px;
+            font-size: 150%;
+        }
+
+        .pattern-card img {
+            max-width: 200px;
+        }
+
+        .pattern-card p {
+            font-size: 0.5em;
+            margin: 0;
+        }
+
     </style>
     <script src="https://cdn.jsdelivr.net/npm/@jaames/iro@5"></script>
 </head>
@@ -185,6 +219,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </form>
         -->
 
+    </div>
+
+    <div class="patterns">
+        <h2>Pattern</h2>
+        <div class="pattern-cards">
+            <?php
+            foreach (glob(realpath(__DIR__ . "/assets/images/patterns") . "/*.png") as $filename) {
+                $basename = basename($filename);
+                echo '<div class="pattern-card">
+                <a href="assets/images/patterns/' . $basename . '"><img src="assets/images/patterns/' . $basename . '" alt="' . $basename . '" target="_blank" rel="noopener noreferrer" /></a>
+                <p>' . $basename . '</p>
+            </div>';
+            }
+            ?>
+        </div>
     </div>
 
     <div class="device-status">
