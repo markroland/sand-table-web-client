@@ -97,13 +97,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         .device-status {
-            position: fixed;
+            /*position: fixed;*/
             left: 0;
             bottom: 0;
             width: 100%;
             padding: 0.5em;
             text-align: center;
             color: rgba(200,184,142, 0.5);
+            background-color: rgba(0,0,0, 0.5);
         }
 
         div.lights {
@@ -186,7 +187,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     </div>
 
-    <div class="device-status">Device Status: <span id="status-text">Unknown</span></div>
+    <div class="device-status">
+        <div>Device Status: <span id="status-text">Unknown</span></div>
+        <div>© Mark Roland, <?php print(date('Y')); ?>. <a href="https://markroland.com/portfolio/sand-table" target="_blank" rel="noopener noreferrer">Project Documentation</a>. <a href="https://iro.js.org" target="_blank" rel="noopener noreferrer">Uses iro.js</a></div>
+    </div>
 
     <script>
         /**
@@ -198,11 +202,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             var xhr = new XMLHttpRequest();
 
             // Without CORS support
-            xhr.open('GET', '/status', true);
+            xhr.open('GET', '<?php print('http://' . $config->server . ':' . $config->port . '/status'); ?>', true);
             xhr.send();
 
             xhr.onload = function() {
-                if (xhr.responseText === "true") { // TODO: Requires verification
+                if (xhr.status == 200) {
+                // if (xhr.responseText === "true") { // TODO: Requires verification
                     document.getElementById('status-text').innerHTML = "On";
                     document.getElementById('status-text').style.color = "rgb(0,255,0)";
                 } else {
