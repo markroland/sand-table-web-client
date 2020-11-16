@@ -110,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             background-color: white;
             color: black;
             width: 320px;
-            margin: 0 auto;
+            margin: 0 auto 1em auto;
             padding: 1em;
         }
 
@@ -128,7 +128,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             border: 1px solid black;
         }
 
+        #picker {
+            width: 240px;
+            margin: 0 auto 1em auto;
+        }
+
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/@jaames/iro@5"></script>
 </head>
 <body>
 
@@ -136,28 +142,47 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     <div class="lights">
 
-        <h2>Lights</h2>
+        <h2>Light</h2>
 
-        <div id="color_preview"></div>
+        <div id="picker"></div>
+        <script>
+            var colorPicker = new iro.ColorPicker('#picker', {
+              width: 240,
+              color: "#FFFFFF"
+            });
 
-        <form name="form_color" method="POST" action="/color">
-            <label>Red <input name="red" type="range" min="0" max="255" value="128" class="slider" id="red_slider"></label><span id="red_value">128</span>
-            <br />
-            <label>Green <input name="green" type="range" min="0" max="255" value="128" class="slider" id="green_slider"></label><span id="green_value">128</span>
-            <br />
-            <label>Blue <input name="blue" type="range" min="0" max="255" value="128" class="slider" id="blue_slider"></label><span id="blue_value">128</span>
-            <br />
-            <label>Intensity <input name="intensity" type="range" min="0.0" max="1.0" step="0.1" value="0.5" class="slider" id="intensity_slider"></label><span id="intensity_value">0.5</span>
-            <br />
-            <input type="submit" value="Submit">
+            colorPicker.on('color:change', function(color) {
+              document.querySelector("#red").value = color.rgb.r
+              document.querySelector("#green").value = color.rgb.g
+              document.querySelector("#blue").value = color.rgb.b
+              document.querySelector("#intensity").value = color.value / 100
+            });
+        </script>
+
+        <form name="solid" method="POST" action="/color">
+            <input type="hidden" name="red" id="red" value="255" />
+            <input type="hidden" name="green" id="green" value="255" />
+            <input type="hidden" name="blue" id="blue" value="255" />
+            <input type="hidden" name="intensity" id="intensity" value="1.0" />
+            <input type="submit" value="Submit" />
         </form>
 
-        <br />
+        <form name="sequence" method="POST" action="/sequence">
+            <select name="sequence">
+                <option value="breathe">Breathe</option>
+                <option value="random">Random</option>
+            </select>
+            <br />
+            <input type="hidden" name="intensity" id="intensity" value="1.0" />
+            <input type="submit" value="Submit" />
+        </form>
 
-        <form name="form_color" method="POST" action="/status">
+        <!--
+        <form name="status" method="POST" action="/status">
             <input type="submit" value="On">
             <input type="submit" value="Off">
         </form>
+        -->
 
     </div>
 
@@ -188,7 +213,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         check_device_status();
     </script>
-
 
     <script>
 
@@ -232,44 +256,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         };
 
-        // Add event listener to change color when Red slider is changed
-        document.getElementById('red_slider').addEventListener('input', function () {
-            document.getElementById('red_value').innerHTML = this.value;
-            document.getElementById("color_preview").style.backgroundColor = "rgb("
-                + document.getElementById('red_slider').value + ","
-                + document.getElementById('green_slider').value + ","
-                + document.getElementById('blue_slider').value
-                + ")";
-        }, false);
+        // Send request
+        document.querySelector('form[name="solid"]').addEventListener("submit", function(e){
+            e.preventDefault();
 
-        // Add event listener to change color when Green slider is changed
-        document.getElementById('green_slider').addEventListener('input', function () {
-            document.getElementById('green_value').innerHTML = this.value;
-            document.getElementById("color_preview").style.backgroundColor = "rgb("
-                + document.getElementById('red_slider').value + ","
-                + document.getElementById('green_slider').value + ","
-                + document.getElementById('blue_slider').value
-                + ")";
-        }, false);
+            var xhr = new XMLHttpRequest();
 
-        // Add event listener to change color when Blue slider is changed
-        document.getElementById('blue_slider').addEventListener('input', function () {
-            document.getElementById('blue_value').innerHTML = this.value;
-            document.getElementById("color_preview").style.backgroundColor = "rgb("
-                + document.getElementById('red_slider').value + ","
-                + document.getElementById('green_slider').value + ","
-                + document.getElementById('blue_slider').value
-                + ")";
-        }, false);
+            xhr.open(this.getAttribute("method"), this.getAttribute("action"));
 
-        // Add event listener to change color when Intensity slider is changed
-        document.getElementById('intensity_slider').addEventListener('input', function () {
-            document.getElementById('intensity_value').innerHTML = this.value;
-            document.getElementById("color_preview").style.opacity = this.value;
-        }, false);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            // xhr.onload = function() {
+            //     if (xhr.status === 200) {
+            //         console.log(xhr.responseText);
+            //     }
+            // };
+            xhr.onreadystatechange = function() {
+                if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
+                    console.log(xhr.responseText);
+                }
+            }
+
+            xhr.send(serialize(this));
+        });
 
         // Send request
-        document.querySelector('form[name="form_color"]').addEventListener("submit", function(e){
+        document.querySelector('form[name="sequence"]').addEventListener("submit", function(e){
             e.preventDefault();
 
             var xhr = new XMLHttpRequest();
