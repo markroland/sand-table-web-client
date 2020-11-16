@@ -71,6 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="viewport" content="width = device-width, initial-scale = 1, maximum-scale = 1" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
     <style type="text/css">
 
         /* http://www.paulirish.com/2012/box-sizing-border-box-ftw/ */
