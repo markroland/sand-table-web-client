@@ -5,7 +5,7 @@
 
 // Read in configuration variables for remote server and port
 $config = null;
-$config_filepath = realpath(__DIR__ . '/../../../data/credentials') . '/sand-table-config.json';
+$config_filepath = realpath(__DIR__ . '/../') . '/sand-table-config.json';
 if (file_exists($config_filepath)) {
     $config = json_decode(file_get_contents($config_filepath));
 }
